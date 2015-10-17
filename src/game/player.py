@@ -80,7 +80,7 @@ class Player(BasePlayer):
                     commands.append(self.build_command(centers[0]))
 
         while len(pending_orders) != 0:
-            future_money = 0
+            ratio = 0
             dest_order = pending_orders[0]
             dest_station = self.stations[0]
 
@@ -88,8 +88,9 @@ class Player(BasePlayer):
                 money = order.get_money()
                 for station in self.stations:
                     path_len = len(nx.shortest_path(graph, station, order.get_node()))
-                    if (money - DECAY_FACTOR * path_len) > future_money:
-                        future_money = money - DECAY_FACTOR * path_len
+                    f = money - DECAY_FACTOR * path_len
+                    if (f ** 2 / path_len) > ratio:
+                        ratio = f ** 2 / path_len
                         dest_order = order
                         dest_station = station
 
