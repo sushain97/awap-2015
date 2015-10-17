@@ -66,6 +66,7 @@ class Player(BasePlayer):
         commands = []
         if not self.has_built_station:
             commands.append(self.build_command(self.stations[0]))
+            state.money -= INIT_BUILD_COST
             self.has_built_station = True
 
         pending_orders = state.get_pending_orders()
