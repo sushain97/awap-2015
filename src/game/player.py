@@ -68,11 +68,10 @@ class Player(BasePlayer):
         # We recommend making it a bit smarter ;-)
 
         graph = state.get_graph()
-        station = self.stations[0]
-
+        
         commands = []
         if not self.has_built_station:
-            commands.append(self.build_command(station))
+            commands.append(self.build_command(self.stations[0]))
             self.has_built_station = True
 
         pending_orders = state.get_pending_orders()
@@ -81,7 +80,7 @@ class Player(BasePlayer):
             future_money = 0
             path_len = 0
             dest_order = pending_orders[0]
-            dest_station = station
+            dest_station = self.stations[0]
 
             for order in pending_orders:
                 money = order.get_money()
