@@ -86,7 +86,6 @@ class Player(BasePlayer):
 
         while len(pending_orders) != 0:
             future_money = 0
-            path_len = 0
             dest_order = pending_orders[0]
             dest_station = self.stations[0]
 
@@ -98,7 +97,6 @@ class Player(BasePlayer):
                         future_money = money - DECAY_FACTOR * path_len
                         dest_order = order
                         dest_station = s
-            #order = max(pending_orders, key=lambda x: x.get_money())
 
             path_list = nx.all_shortest_paths(graph, dest_station, dest_order.get_node())
             for path in path_list:
@@ -108,6 +106,7 @@ class Player(BasePlayer):
                         graph.edge[u][v]['in_use'] = True
                         graph.edge[v][u]['in_use'] = True
                     break
+
             pending_orders.remove(dest_order)
 
         return commands
