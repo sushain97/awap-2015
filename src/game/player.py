@@ -59,19 +59,20 @@ class Player(BasePlayer):
             self.has_built_station = True
 
         pending_orders = state.get_pending_orders()
-        ratio = 0
-        dest_order = pending_orders[0]
         if len(pending_orders) != 0:
+          future_money = 0
+          dest_order = pending_orders[0]
             for order in pending_orders:
                 money = order.get_money()
                 path_len = len(nx.shortest_path(graph, station, order.get_node()))
-                if (money - DECAY_FACTOR * path_len) > ratio:
-                    ratio = money - DECAY_FACTOR * path_len
+                if (money - DECAY_FACTOR * path_len) > future_money:
+                    future_money = money - DECAY_FACTOR * path_len
                     dest_order = order
             #order = max(pending_orders, key=lambda x: x.get_money())
+
             path_list = nx.all_shortest_paths(graph, station, dest_order.get_node())
             for path in path_list:
                 if self.path_is_valid(state, path):
                     commands.append(self.send_command(dest_order, path))
-
+                    return commands
         return commands
