@@ -24,8 +24,8 @@ class Player(BasePlayer):
         """
 
         graph = state.get_graph()
-        e_dict = nx.eccentricity(graph)
-        station = nx.center(graph)[0] if nx.center(graph) else max(e_dict, key=lambda i: x[i])
+        #e_dict = nx.eccentricity(graph)
+        station = nx.center(graph)[0] if nx.center(graph) else graph.nodes()[len(graph.nodes()) / 2] #max(e_dict, key=lambda i: x[i])
         self.stations.append(station)
 
     # Checks if we can use a given path
@@ -71,7 +71,7 @@ class Player(BasePlayer):
 
         pending_orders = state.get_pending_orders()
 
-        if len(self.stations) < HUBS and self.can_build_station(state) and pending_orders:
+        if len(self.stations) < HUBS and pending_orders and self.can_build_station(state):
             subgraph = graph.subgraph(list(map(lambda x: x.get_node(), pending_orders)))
             if nx.is_connected(subgraph):
                 centers = nx.center(subgraph)
