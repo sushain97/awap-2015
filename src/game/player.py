@@ -2,6 +2,7 @@ import networkx as nx
 import random
 from base_player import BasePlayer
 from settings import *
+import operator
 
 class Player(BasePlayer):
     """
@@ -24,7 +25,9 @@ class Player(BasePlayer):
         """
 
         graph = state.get_graph()
-        station = nx.center(graph)[0] if nx.center(graph) else graph.nodes()[0]
+        e_dict = nx.eccentricity(graph)
+        station = nx.center(graph)[0] if nx.center(graph) else max(e_dict, key=lambda i: x[i])
+        #max(pending_orders, key=lambda x: x.get_money())
         self.stations.append(station)
 
     # Checks if we can use a given path
