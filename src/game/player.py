@@ -35,7 +35,6 @@ class Player(BasePlayer):
                 return False
         return True
 
-<<<<<<< Updated upstream
     def can_build_station(self, state):
         current = len([i for i, x in self.state.graph.node.iteritems() if x['is_station']])
         build_cost = INIT_BUILD_COST * (BUILD_FACTOR ** current)
@@ -43,10 +42,9 @@ class Player(BasePlayer):
             return True
         else:
             return False
-=======
+
     def path_to_edges(self, path):
         return [(path[i], path[i + 1]) for i in range(0, len(path) - 1)]
->>>>>>> Stashed changes
 
     def step(self, state):
         """
