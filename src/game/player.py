@@ -35,6 +35,7 @@ class Player(BasePlayer):
                 return False
         return True
 
+<<<<<<< Updated upstream
     def can_build_station(self, state):
         current = len([i for i, x in self.state.graph.node.iteritems() if x['is_station']])
         build_cost = INIT_BUILD_COST * (BUILD_FACTOR ** current)
@@ -42,6 +43,10 @@ class Player(BasePlayer):
             return True
         else:
             return False
+=======
+    def path_to_edges(self, path):
+        return [(path[i], path[i + 1]) for i in range(0, len(path) - 1)]
+>>>>>>> Stashed changes
 
     def step(self, state):
         """
@@ -70,7 +75,8 @@ class Player(BasePlayer):
             self.has_built_station = True
 
         pending_orders = state.get_pending_orders()
-        if len(pending_orders) != 0:
+
+        while len(pending_orders) != 0:
             future_money = 0
             dest_order = pending_orders[0]
 
@@ -86,5 +92,10 @@ class Player(BasePlayer):
             for path in path_list:
                 if self.path_is_valid(state, path):
                     commands.append(self.send_command(dest_order, path))
-                    return commands
+                    for (u, v) in self.path_to_edges(path):
+                        graph.edge[u][v]['in_use'] = True
+                        graph.edge[v][u]['in_use'] = True
+                        break
+            pending_orders.remove(dest_order)
+
         return commands
