@@ -93,7 +93,7 @@ class Player(BasePlayer):
                     for (u, v) in self.path_to_edges(path):
                         graph.edge[u][v]['in_use'] = True
                         graph.edge[v][u]['in_use'] = True
-                        break
+                    break
             pending_orders.remove(dest_order)
 
         return commands
