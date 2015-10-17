@@ -65,5 +65,6 @@ class Player(BasePlayer):
             for path in path_list:
                 if self.path_is_valid(state, path):
                     commands.append(self.send_command(order, path))
-
+                    return commands
+                    
         return commands
