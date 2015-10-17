@@ -60,8 +60,9 @@ class Player(BasePlayer):
 
         pending_orders = state.get_pending_orders()
         if len(pending_orders) != 0:
-          future_money = 0
-          dest_order = pending_orders[0]
+            future_money = 0
+            dest_order = pending_orders[0]
+
             for order in pending_orders:
                 money = order.get_money()
                 path_len = len(nx.shortest_path(graph, station, order.get_node()))
