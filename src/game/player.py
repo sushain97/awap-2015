@@ -39,7 +39,7 @@ class Player(BasePlayer):
         return True
 
     def can_build_station(self, state):
-        current = len([i for i, x in self.state.graph.node.iteritems() if x['is_station']])
+        current = len([i for i, x in state.graph.node.iteritems() if x['is_station']])
         build_cost = INIT_BUILD_COST * (BUILD_FACTOR ** current)
         if state.get_money() >= build_cost:
             return True
@@ -75,6 +75,14 @@ class Player(BasePlayer):
             self.has_built_station = True
 
         pending_orders = state.get_pending_orders()
+
+        if len(self.stations) < HUBS and self.can_build_station(state) and pending_orders:
+            subgraph = graph.subgraph(list(map(lambda x: x.get_node(), pending_orders)))
+            if nx.is_connected(subgraph):
+                centers = nx.center(subgraph)
+                if centers:
+                    self.stations.append(centers[0])
+                    commands.append(self.build_command(centers[0]))
 
         while len(pending_orders) != 0:
             future_money = 0
