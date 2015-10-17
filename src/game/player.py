@@ -32,6 +32,14 @@ class Player(BasePlayer):
                 return False
         return True
 
+    def can_build_station(self, state):
+        current = len([i for i, x in self.state.graph.node.iteritems() if x['is_station']])
+        build_cost = INIT_BUILD_COST * (BUILD_FACTOR ** current)
+        if state_get.money() >= build_cost:
+            return True
+        else:
+            return False
+
     def step(self, state):
         """
         Determine actions based on the current state of the city. Called every
