@@ -10,7 +10,6 @@ class Player(BasePlayer):
     name or the base class.
     """
 
-    # You can set up static state here
     has_built_station = False
     stations = []
 
@@ -27,7 +26,6 @@ class Player(BasePlayer):
         graph = state.get_graph()
         e_dict = nx.eccentricity(graph)
         station = nx.center(graph)[0] if nx.center(graph) else max(e_dict, key=lambda i: x[i])
-        #max(pending_orders, key=lambda x: x.get_money())
         self.stations.append(station)
 
     # Checks if we can use a given path
@@ -63,10 +61,6 @@ class Player(BasePlayer):
             self.build_command. The commands are evaluated in order.
         """
 
-        # We have implemented a naive bot for you that builds a single station
-        # and tries to find the shortest path from it to first pending order.
-        # We recommend making it a bit smarter ;-)
-
         graph = state.get_graph()
         
         commands = []
@@ -91,12 +85,12 @@ class Player(BasePlayer):
 
             for order in pending_orders:
                 money = order.get_money()
-                for s in self.stations:
-                    path_len = len(nx.shortest_path(graph, s, order.get_node()))
+                for station in self.stations:
+                    path_len = len(nx.shortest_path(graph, station, order.get_node()))
                     if (money - DECAY_FACTOR * path_len) > future_money:
                         future_money = money - DECAY_FACTOR * path_len
                         dest_order = order
-                        dest_station = s
+                        dest_station = station
 
             path_list = nx.all_shortest_paths(graph, dest_station, dest_order.get_node())
             for path in path_list:
