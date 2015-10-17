@@ -11,6 +11,7 @@ class Player(BasePlayer):
 
     # You can set up static state here
     has_built_station = False
+    stations = []
 
     def __init__(self, state):
         """
@@ -22,7 +23,9 @@ class Player(BasePlayer):
             The initial state of the game. See state.py for more information.
         """
 
-        return
+        graph = state.get_graph()
+        station = nx.center(graph)[0] if nx.center(graph) else graph.nodes()[0]
+        self.stations.append(station)
 
     # Checks if we can use a given path
     def path_is_valid(self, state, path):
@@ -59,7 +62,7 @@ class Player(BasePlayer):
         # We recommend making it a bit smarter ;-)
 
         graph = state.get_graph()
-        station = graph.nodes()[0]
+        station = self.stations[0]
 
         commands = []
         if not self.has_built_station:
