@@ -76,11 +76,19 @@ class Player(BasePlayer):
             if nx.is_connected(subgraph):
                 centers = nx.center(subgraph)
                 if centers:
-                    self.stations.append(centers[0])
-                    commands.append(self.build_command(centers[0]))
+                    for center in centers:
+                        too_close = False
+
+                        for station in self.stations:
+                            if len(nx.shortest_path(graph, center, station)) - 1 < ORDER_VAR:
+                                too_close = True
+
+                        if not too_close:
+                            self.stations.append(center)
+                            commands.append(self.build_command(center))
 
         while len(pending_orders) != 0:
-            ratio = 0
+            future_money = 0
             dest_order = pending_orders[0]
             dest_station = self.stations[0]
 
@@ -88,9 +96,8 @@ class Player(BasePlayer):
                 money = order.get_money()
                 for station in self.stations:
                     path_len = len(nx.shortest_path(graph, station, order.get_node()))
-                    f = money - DECAY_FACTOR * path_len
-                    if (f ** 2 / path_len) > ratio:
-                        ratio = f ** 2 / path_len
+                    if money - DECAY_FACTOR * path_len > future_money:
+                        future_money = money - DECAY_FACTOR * path_len
                         dest_order = order
                         dest_station = station
 
