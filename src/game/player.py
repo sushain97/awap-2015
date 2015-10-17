@@ -38,7 +38,7 @@ class Player(BasePlayer):
     def can_build_station(self, state):
         current = len([i for i, x in self.state.graph.node.iteritems() if x['is_station']])
         build_cost = INIT_BUILD_COST * (BUILD_FACTOR ** current)
-        if state_get.money() >= build_cost:
+        if state.get_money() >= build_cost:
             return True
         else:
             return False
@@ -76,24 +76,28 @@ class Player(BasePlayer):
 
         while len(pending_orders) != 0:
             future_money = 0
+            path_len = 0
             dest_order = pending_orders[0]
+            dest_station = station
 
             for order in pending_orders:
                 money = order.get_money()
-                path_len = len(nx.shortest_path(graph, station, order.get_node()))
-                if (money - DECAY_FACTOR * path_len) > future_money:
-                    future_money = money - DECAY_FACTOR * path_len
-                    dest_order = order
+                for s in self.stations:
+                    path_len = len(nx.shortest_path(graph, s, order.get_node()))
+                    if (money - DECAY_FACTOR * path_len) > future_money:
+                        future_money = money - DECAY_FACTOR * path_len
+                        dest_order = order
+                        dest_station = s
             #order = max(pending_orders, key=lambda x: x.get_money())
 
-            path_list = nx.all_shortest_paths(graph, station, dest_order.get_node())
+            path_list = nx.all_shortest_paths(graph, dest_station, dest_order.get_node())
             for path in path_list:
                 if self.path_is_valid(state, path):
                     commands.append(self.send_command(dest_order, path))
                     for (u, v) in self.path_to_edges(path):
                         graph.edge[u][v]['in_use'] = True
                         graph.edge[v][u]['in_use'] = True
-                        break
+                    break
             pending_orders.remove(dest_order)
 
         return commands
